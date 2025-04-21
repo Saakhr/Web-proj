@@ -53,8 +53,9 @@ start-dev:
 ## css: build tailwindcss
 .PHONY: css
 css:
-	tailwindcss -i input.css -o css/output.css --minify
+	tailwindcss -i input.css -o static/css/output.css --minify
 
 .PHONY: css-watch
 css-watch:
-	tailwindcss -i input.css -o css/output.css --watch
+	tailwindcss -i input.css -o static/css/output.css --watch
+

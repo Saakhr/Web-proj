@@ -28,7 +28,7 @@ func main() {
 
 
   app.Static("/static", "./static")
-  app.Static("/css", "./css")
+  // app.Static("/css", "./css")
 
   // JWT initialization
   err = getKey()
