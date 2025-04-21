@@ -20,10 +20,10 @@ var (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	app := fiber.New()
 
 
@@ -31,7 +31,7 @@ func main() {
   // app.Static("/css", "./css")
 
   // JWT initialization
-  err = getKey()
+  err := getKey()
   if err != nil {
     log.Fatal("Couldn't Load JWT RSA key" + err.Error())
   }
