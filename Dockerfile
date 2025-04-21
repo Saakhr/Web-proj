@@ -22,7 +22,6 @@ WORKDIR /
 COPY --from=go-builder /web-proj /web-proj
 COPY --from=tailwind-builder /app/static/ ./static/
 COPY templates/ ./templates/
-COPY .env .
 
 EXPOSE 8080
 CMD ["/web-proj"]
