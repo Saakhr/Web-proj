@@ -9,7 +9,8 @@ import (
 	"log"
 	"os"
 
-	v1routes "github.com/Saakhr/jwt-fiber-template/pkg/v1/routes"
+	v1middlewares "github.com/Saakhr/Web-proj/pkg/v1/middlewares"
+	v1routes "github.com/Saakhr/Web-proj/pkg/v1/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -25,33 +26,35 @@ func main() {
 	}
 	app := fiber.New()
 
-	// Login route
-	err = getKey()
-	if err != nil {
-		log.Fatal("Couldn't Load JWT RSA key" + err.Error())
-	}
-	app.Use(logger.New())
-	v1 := v1routes.GetRoutes(privateKey)
-	app.Mount("/v1", v1)
+
+  app.Static("/static", "./static")
+  app.Static("/css", "./css")
+
+  // JWT initialization
+  err = getKey()
+  if err != nil {
+    log.Fatal("Couldn't Load JWT RSA key" + err.Error())
+  }
+
+  // Middleware
+  app.Use(logger.New())
+
+  // Routes
+  v1 := v1routes.GetRoutes(privateKey)
+  app.Mount("/v1", v1)
+
+  // Root redirect
+  app.Get("/", func(c *fiber.Ctx) error {
+    return c.Redirect("/v1")
+  })
+
+  // 404 Handler (make sure this comes after all other routes)
+  app.Use(v1middlewares.NotFoundMiddleware)
+
 
 	log.Fatal(app.Listen(":8080"))
 }
 func getKey() error {
-	// Replace with your actual key file path
-	// keyFilePath := "key.pem"
-	//
-	// // Read the key file
-	// file, err := os.Open(keyFilePath)
-	// if err != nil {
-	// 	return errors.New("Error opening file:" + keyFilePath)
-	// }
-	// defer file.Close()
-	//
-	// // Read the file contents
-	// _, err = io.ReadAll(file)
-	// if err != nil {
-	// 	return errors.New("Error reading file:" + keyFilePath)
-	// }
 
 	xs := os.Getenv("JWT_RS_SECRET")
 

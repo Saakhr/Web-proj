@@ -48,4 +48,13 @@ start:
 
 .PHONY: start-dev
 start-dev:
-	@make -j start 
+	@make -j start css-watch
+
+## css: build tailwindcss
+.PHONY: css
+css:
+	tailwindcss -i input.css -o css/output.css --minify
+
+.PHONY: css-watch
+css-watch:
+	tailwindcss -i input.css -o css/output.css --watch

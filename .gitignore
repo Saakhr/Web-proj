@@ -1,6 +1,7 @@
 tmp/
 node_modules/
 /node_modules
+css/*
 .env
 db/
 scdb
