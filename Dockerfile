@@ -6,7 +6,7 @@ RUN go mod download
 
 COPY . .
  
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping /app/cmd/main
+RUN CGO_ENABLED=1 GOOS=linux go build -o /docker-gs-ping /app/cmd/main
 # RUN openssl genrsa -out /app/key.pem 2048
 
 EXPOSE 8080
