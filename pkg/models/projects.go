@@ -47,7 +47,7 @@ func DeleteProject(id int) error {
 
 func GetStudentProjectsRec(studentID int) ([]Projects,error){
   rows,err:=database.DB.Query(`
-SELECT p.* 
+SELECT p.id, p.title, p.description 
 FROM projects p
 WHERE p.id NOT IN (
     SELECT wp.project_id 

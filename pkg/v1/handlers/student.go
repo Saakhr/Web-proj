@@ -51,7 +51,6 @@ func CreateStudentWishlistItem(c *fiber.Ctx, privateKey *rsa.PrivateKey) error {
 			continue // Skip invalid IDs
 		}
 
-    println(id)
 		projectIDs = append(projectIDs, id)
 	}
 
@@ -60,7 +59,6 @@ func CreateStudentWishlistItem(c *fiber.Ctx, privateKey *rsa.PrivateKey) error {
 		return v1.NotFoundMiddleware(c)
 	}
 	for _, id := range projectIDs {
-    println(id)
 		models.CreateWish(user.UserID, id)
 	}
 

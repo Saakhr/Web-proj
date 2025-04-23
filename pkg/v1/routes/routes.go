@@ -2,9 +2,7 @@ package v1
 
 import (
 	"crypto/rsa"
-	"fmt"
 
-	// v1middlewares "github.com/Saakhr/Web-proj/pkg/v1/middlewares"
 	"github.com/Saakhr/Web-proj/pkg/v1/handlers"
 	"github.com/Saakhr/Web-proj/pkg/v1/services"
 	"github.com/Saakhr/Web-proj/pkg/v1/utility"
@@ -31,7 +29,6 @@ func GetRoutes(Key *rsa.PrivateKey) *fiber.App {
 
 	v1.Get("/announcements", func(c *fiber.Ctx)error {
     dept:=c.Query("dept")
-    fmt.Println(dept)
     if dept == ""{
       return handlers.AnnouncementList(c,privateKey,"general")
     }else{

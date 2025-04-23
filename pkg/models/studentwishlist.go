@@ -45,29 +45,22 @@ func DeleteWishlistItem(studentID int) error {
 	return nil
 }
 
-func DeleteStudentWishlistItem(id,studentID int) error {
-	// Prepare the DELETE query
+func DeleteStudentWishlistItem(wishlistID, studentID int) error {
+	// Validate inputs
+	if wishlistID <= 0 || studentID <= 0 {
+		return fmt.Errorf("invalid IDs: wishlistID=%d, studentID=%d", wishlistID, studentID)
+	}
+
+	// Prepare the DELETE query with RETURNING to verify deletion
 	query := `
-        DELETE FROM student_project_wishlist
-        WHERE id = $1 AND student_id = $2;`
+		DELETE FROM student_project_wishlist
+		WHERE id = $1 AND student_id = $2
+		RETURNING id;`
 
-	// Execute the query
-	result, err := database.DB.Exec(query, id, studentID)
-	if err != nil {
-		return fmt.Errorf("failed to delete student: %v", err)
-	}
+	var deletedID int
+	err := database.DB.QueryRow(query, wishlistID, studentID).Scan(&deletedID)
 
-	// Check if any rows were affected
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("failed to check affected rows: %v", err)
-	}
-
-	if rowsAffected == 0 {
-		return fmt.Errorf("no student found with ID %d", studentID)
-	}
-
-	return nil
+  return err
 }
 
 func GetAllWishlists() ([]StudentWishlist, error) {
@@ -140,7 +133,8 @@ func GetStudentWishlists(id int) (StudentWishlist, error) {
     ts.first_name,
     ts.last_name,
     p.id,
-    p.Title
+    p.Title,
+  p.description
 FROM 
     ` + "`student_project_wishlist`" + `s
 JOIN 
@@ -166,8 +160,9 @@ JOIN
 		var studentName2 string
 		var projectID int
 		var projectName string
+    var projectDesc string
 
-		err := rows.Scan(&wishlistID, &studentID, &studentName, &studentName2, &projectID, &projectName)
+		err := rows.Scan(&wishlistID, &studentID, &studentName, &studentName2, &projectID, &projectName, &projectDesc)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -183,7 +178,7 @@ JOIN
 		}
 
 		// Append the course to the Group's Modules
-		group.Projects = append(group.Projects, Projects{Title: projectName, ID: projectID})
+		group.Projects = append(group.Projects, Projects{Title: projectName, ID: projectID,Description: projectDesc})
 		group.ID = append(group.ID, wishlistID)
 
 		// Update the Group in the map

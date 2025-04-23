@@ -9,10 +9,11 @@ templ layout(title string, claim *services.Claims) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+			<link rel="icon" href="/static/favicon.ico" sizes="any"/>
 			<script src="/static/htmx@1.9.10.js"></script>
 			<script src="/static/alpine@3.13.5.js" defer></script>
 			<script src="/static/multi-swap.js"></script>
-      <!--
+			<!--
 			<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 			<link
 				rel="stylesheet"
@@ -22,35 +23,33 @@ templ layout(title string, claim *services.Claims) {
 			<link href="/static/css/output.css" rel="stylesheet"/>
 			<title>{ title }</title>
 		</head>
-<body hx-boost="true" hx-ext="multi-swap" class="bg-gray-100">
-  <nav class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="/v1/" class="text-2xl font-bold text-primary">School Management</a>
-      <div class="space-x-4">
-        if claim != nil {
-          if claim.Role == "admin" {
-            <a href="/v1/admin/dashboard" class="btn btn-ghost text-gray-600 hover:text-primary">Dashboard</a>
-          } else {
-            <a href="/v1/student/dashboard" class="btn btn-ghost text-gray-600 hover:text-primary">Dashboard</a>
-          }
-          <a href="/v1/logout" class="btn btn-outline btn-error">Logout</a>
-        } else {
-          <a href="/v1/login" class="btn btn-primary">Login</a>
-        }
-      </div>
-    </div>
-  </nav>
-
-  <main class="container mx-auto px-4 py-10 h-full">
-    { children... }
-  </main>
-
-  <footer class="bg-white border-t mt-12 py-6">
-    <div class="container mx-auto text-center text-gray-500">
-      © 2025 School Management System
-    </div>
-  </footer>
-</body>
+		<body hx-boost="true" hx-ext="multi-swap" class="bg-gray-100">
+			<nav class="bg-white shadow-md">
+				<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+					<a href="/v1/" class="text-2xl font-bold text-primary">School Management</a>
+					<div class="space-x-4">
+						if claim != nil {
+							if claim.Role == "admin" {
+								<a href="/v1/admin/dashboard" class="btn btn-ghost text-gray-600 hover:text-primary">Dashboard</a>
+							} else {
+								<a href="/v1/student/dashboard" class="btn btn-ghost text-gray-600 hover:text-primary">Dashboard</a>
+							}
+							<a href="/v1/logout" class="btn btn-outline btn-error">Logout</a>
+						} else {
+							<a href="/v1/login" class="btn btn-primary">Login</a>
+						}
+					</div>
+				</div>
+			</nav>
+			<main class="container mx-auto px-4 py-10 h-full">
+				{ children... }
+			</main>
+			<footer class="bg-white border-t mt-12 py-6">
+				<div class="container mx-auto text-center text-gray-500">
+					© 2025 School Management System
+				</div>
+			</footer>
+		</body>
 		<script>
   function reloadPage() {
     window.addEventListener('htmx:afterSwap', function (event) {

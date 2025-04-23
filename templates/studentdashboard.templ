@@ -36,8 +36,11 @@ templ StudentDashBoard(data *DashBoardDataStudent, claim *services.Claims) {
 							>
 								<div class="flex flex-col gap-2 h-full w-full" id="inputs">
 									for _,project := range data.Projects {
-										<div class="flex justify-between items-center">
+										<div class="border-b py-2 flex justify-between items-center">
+                      <div>
 											<label>{ project.Title }</label>
+                      <p class="text-sm text-gray-600">{ project.Description }</p>
+                      </div>
 											<input type="checkbox" class="checkbox checkbox-xl" name="selectedProjects" value={ fmt.Sprintf("%v", project.ID) }/>
 										</div>
 									}
@@ -47,16 +50,16 @@ templ StudentDashBoard(data *DashBoardDataStudent, claim *services.Claims) {
 						</div>
 					</dialog>
 					<div id="announcements-list">
-						for _, announcement := range data.MyWishlists.Projects {
+						for i, announcement := range data.MyWishlists.Projects {
 							<div class="border-b py-2 flex justify-between items-center">
 								<div>
 									<h3 class="font-medium">{ announcement.Title }</h3>
-									<!--<p class="text-sm text-gray-600">{ announcement.Display }</p>-->
+									<p class="text-sm text-gray-600">{ announcement.Description }</p>
 								</div>
 								<button
 									class="btn btn-outline btn-error btn-circle"
 									hx-swap="none"
-									hx-delete={ "/v1/student/wishlist?id=" + fmt.Sprintf("%v", announcement.ID) }
+									hx-delete={ "/v1/student/wishlist?id=" + fmt.Sprintf("%v", data.MyWishlists.ID[i]) }
 									hx-refresh="true"
 								>🗑️</button>
 							</div>
