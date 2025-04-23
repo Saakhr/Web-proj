@@ -11,14 +11,6 @@ import (
 func SetupStudentRoutes(app *fiber.App, privateKey *rsa.PrivateKey) {
 	student := app.Group("/student")
 	
-	// Public routes
-	// admin.Get("/login", func(c *fiber.Ctx) error {
-	// 	return utility.Render(c, templates.Login("","admin"))
-	// })
-	// admin.Post("/login",func(c *fiber.Ctx) error { 
-	//    return handlers.AdminLogin(c,privateKey)
-	//  })
-
 	// Protected routes
 	student.Use(v1middlewares.NewAuthMiddleware(privateKey,"student"))
 	{ 
@@ -33,7 +25,5 @@ func SetupStudentRoutes(app *fiber.App, privateKey *rsa.PrivateKey) {
       return handlers.CreateStudentWishlistItem(c,privateKey)
     })
 
-		// admin.Get("/announcements", handlers.AnnouncementList)
-		// admin.Post("/announcements", handlers.CreateAnnouncement)
 	}
 }

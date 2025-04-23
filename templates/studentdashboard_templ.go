@@ -52,7 +52,7 @@ func StudentDashBoard(data *DashBoardDataStudent, claim *services.Claims) templ.
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"container mx-auto px-4 py-8 text-slate-800\"><h1 class=\"text-2xl font-bold mb-6\">Student Dashboard</h1><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><!-- Announcements Section --><div id=\"announcements\" class=\"bg-white p-6 rounded-lg shadow\"><h2 class=\"text-xl font-semibold mb-4\">Wishlist:</h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"container mx-auto px-4 py-8 text-slate-800\"><h1 class=\"text-2xl font-bold mb-6\">Student Dashboard</h1><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\"><!-- Announcements Section --><div id=\"announcements\" class=\"bg-white p-6 rounded-lg w-10/12 shadow\"><h2 class=\"text-xl font-semibold mb-4\">Wishlist:</h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

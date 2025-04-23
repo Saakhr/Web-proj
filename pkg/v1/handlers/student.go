@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/Saakhr/Web-proj/pkg/models"
-	v1 "github.com/Saakhr/Web-proj/pkg/v1/middlewares"
 	"github.com/Saakhr/Web-proj/pkg/v1/services"
 	"github.com/Saakhr/Web-proj/pkg/v1/utility"
 	"github.com/Saakhr/Web-proj/templates"
@@ -56,7 +55,7 @@ func CreateStudentWishlistItem(c *fiber.Ctx, privateKey *rsa.PrivateKey) error {
 
 	user, err := services.GetUserFromCookie(c, privateKey)
 	if err != nil {
-		return v1.NotFoundMiddleware(c)
+    return c.Redirect("/v1")
 	}
 	for _, id := range projectIDs {
 		models.CreateWish(user.UserID, id)
@@ -69,7 +68,7 @@ func DeleteStudentWishlistItem(c *fiber.Ctx, privateKey *rsa.PrivateKey) error {
 	id := c.QueryInt("id")
 	user, err := services.GetUserFromCookie(c, privateKey)
 	if err != nil {
-		return v1.NotFoundMiddleware(c)
+    return c.Redirect("/v1")
 	}
 	if err := models.DeleteStudentWishlistItem(id, user.UserID); err != nil {
 		return err
@@ -89,19 +88,16 @@ func DeleteStudent(c *fiber.Ctx) error {
 
 func StudentDashboard(c *fiber.Ctx, privateKey *rsa.PrivateKey) error {
 
-	//  projects,err:=models.GetProjects()
-	// if err != nil {
-	// 	return v1.NotFoundMiddleware(c)
-	// }
 
 	user, err := services.GetUserFromCookie(c, privateKey)
 	if err != nil {
-		return v1.NotFoundMiddleware(c)
+
+    return c.Redirect("/v1")
 	}
 
 	wishlists, err := models.GetStudentWishlists(user.UserID)
 	if err != nil {
-		return v1.NotFoundMiddleware(c)
+    return c.Redirect("/v1")
 	}
 	projects, err := models.GetStudentProjectsRec(user.UserID)
 

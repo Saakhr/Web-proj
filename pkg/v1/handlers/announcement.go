@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Saakhr/Web-proj/pkg/models"
-	v1 "github.com/Saakhr/Web-proj/pkg/v1/middlewares"
 	"github.com/Saakhr/Web-proj/pkg/v1/services"
 	"github.com/Saakhr/Web-proj/pkg/v1/utility"
 	"github.com/Saakhr/Web-proj/templates"
@@ -17,16 +16,8 @@ func AnnouncementList(c *fiber.Ctx,privateKey *rsa.PrivateKey,dept string) error
 	
 	announcements, err := models.GetAnnouncementsByDepartment(dept)
 	if err != nil {
-		// return utility.Render(c,templates.Error("Failed to load announcements"))
-    return v1.NotFoundMiddleware(c)
-	}
-    // _, err = services.GetUserFromContext(c)
-    // if err != nil {
-    //     log.Printf("Failed to get user from context: %v", err)
-    //     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-    //         "error": "Authentication required",
-    //     })
-    // }
+    return c.Redirect("/")
+  }
 
   user, err := services.GetUserFromCookie(c, privateKey)
   if err!=nil{
@@ -38,8 +29,7 @@ func AnnouncementList(c *fiber.Ctx,privateKey *rsa.PrivateKey,dept string) error
 func ListOfAnnouncements(c *fiber.Ctx,dept string)error {
 	announcements, err := models.GetAnnouncementsByDepartment(dept)
 	if err != nil {
-		// return utility.Render(c,templates.Error("Failed to load announcements"))
-    return v1.NotFoundMiddleware(c)
+    return c.Redirect("/")
 	}
   return utility.Render(c, templates.ListOfAnnouncements(announcements))
 }
@@ -47,14 +37,12 @@ func ListOfAnnouncements(c *fiber.Ctx,dept string)error {
 func CreateAnnouncement(c *fiber.Ctx) error {
 	var announcement models.Announcement
 	if err := c.BodyParser(&announcement); err != nil {
-
-    return c.SendString("ss")
+    return c.Redirect("/")
 	}
 
 	announcement.DateTime = time.Now()
 	if err := models.CreateAnnouncement(&announcement); err != nil {
-    return c.SendString("ss")
-
+    return c.Redirect("/")
 	}
 
 	return c.Redirect("/v1/admin/dashboard")

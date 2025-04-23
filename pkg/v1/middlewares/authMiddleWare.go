@@ -25,6 +25,8 @@ func NewAuthMiddleware(privateKey *rsa.PrivateKey, role string) fiber.Handler {
 		}
 
 		if token == "" {
+
+			return c.Redirect("/")
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Authorization token required",
 			})
@@ -42,6 +44,8 @@ func NewAuthMiddleware(privateKey *rsa.PrivateKey, role string) fiber.Handler {
 		// Detailed error handling
 
 		if !parsedToken.Valid || err != nil {
+
+			return c.Redirect("/")
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Invalid token",
 			})
@@ -49,18 +53,22 @@ func NewAuthMiddleware(privateKey *rsa.PrivateKey, role string) fiber.Handler {
 
 		claims, ok := parsedToken.Claims.(*services.Claims)
 		if !ok {
+
+			return c.Redirect("/")
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Invalid token claims",
 			})
 		}
 
 		if claims.Role != role {
+
+			return c.Redirect("/")
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"error": "Insufficient permissions",
 			})
 		}
 
-    c.Locals("user", claims) // Store the actual claims, not the token
+		c.Locals("user", claims) // Store the actual claims, not the token
 		return c.Next()
 	}
 }

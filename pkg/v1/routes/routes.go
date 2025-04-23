@@ -20,9 +20,6 @@ func GetRoutes(Key *rsa.PrivateKey) *fiber.App {
 	v1 := fiber.New()
 	privateKey = Key
 
-	// Unauthenticated route
-	// v1.Post("/login", login)
-
 	v1.Get("/", func(c *fiber.Ctx) error {
 		return c.Redirect("/v1/announcements")
 	})
@@ -55,55 +52,12 @@ func GetRoutes(Key *rsa.PrivateKey) *fiber.App {
 	SetupAdminRoutes(v1, Key)
   SetupStudentRoutes(v1,Key)
 
-	// v1.Get("/:name?", func(c *fiber.Ctx) error {
-	// 	name := c.Params("name")
-	// 	c.Locals("name", name)
-	// 	if name == "" {
-	// 		name = "World"
-	// 	}
-	//
-	// 	_ = services.GetJWTFromCookie(c, privateKey)
-	// 	user, err := services.GetUserFromContext(c)
-	// 	if err != nil {
-	// 		return utility.Render(c, templates.Home(name, nil))
-	// 	}
-	// 	return utility.Render(c, templates.Home(name, user))
-	// })
 
 	// Restricted Routes
 	v1.Get("/2", accessible)
-	// v1.Get("/restricted", v1middlewares.NewAuthMiddleware(privateKey), restricted)
 
 	return v1
 }
-
-// func login(c *fiber.Ctx) error {
-// 	user := c.FormValue("user")
-// 	pass := c.FormValue("pass")
-//
-// 	// Throws Unauthorized error
-// 	if user != "john" || pass != "doe" {
-// 		return c.SendStatus(fiber.StatusUnauthorized)
-// 	}
-//
-// 	// Create the Claims
-// 	claims := jwt.MapClaims{
-// 		"name":  "John Doe",
-// 		"admin": true,
-// 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-// 	}
-//
-// 	// Create token
-// 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-//
-// 	// Generate encoded token and send it as response.
-// 	t, err := token.SignedString(privateKey)
-// 	if err != nil {
-// 		return c.SendStatus(fiber.StatusInternalServerError)
-// 	}
-//
-// 	return c.JSON(fiber.Map{"token": t})
-// }
 
 func accessible(c *fiber.Ctx) error {
 	return c.SendString("Accessible")
