@@ -1,0 +1,239 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/Saakhr/Web-proj/pkg/models"
+	"github.com/Saakhr/Web-proj/pkg/v1/services"
+)
+
+type DashBoardDataAdmin struct {
+	Announcements []models.Announcement
+	Projects      []models.Projects
+	Wishlists     []models.StudentWishlist
+	Students      []models.Student
+}
+
+templ AdminDashBoard(data *DashBoardDataAdmin, claim *services.Claims) {
+	@layout("Admin Dashboard", claim) {
+		<div class="container mx-auto px-4 py-8 text-slate-800">
+			<h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<!-- Announcements Section -->
+				<div id="announcements" class="bg-white p-6 rounded-lg shadow">
+					<h2 class="text-xl font-semibold mb-4">Announcements</h2>
+					<button class="btn btn-outline btn-primary" onclick={ templ.ComponentScript{Call: "my_modal_3.showModal()"} }>
+						Create Announcement
+					</button>
+					<dialog id={ "my_modal_3" } class="modal text-slate-800">
+						<div class="modal-box">
+							<form hx-disable method="dialog">
+								<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+							</form>
+							<h3 class="font-bold text-lg mb-4">Add Announcement:</h3>
+							<form
+								class="flex flex-col gap-2"
+								action="/v1/admin/announcement"
+								method="POST"
+							>
+								<div class="flex flex-col gap-2 h-full w-full" id="inputs">
+									<label>Title:</label>
+									<input
+										type="text"
+										name="title"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+									<label>Departement:</label>
+									<label class="select w-full">
+										<span class="label">Departement</span>
+										<select name="display">
+											<option value="general">General</option>
+											<option value="computer_science">Computer Science</option>
+											<option value="physics">Physics</option>
+											<option value="chemistry">Chemistry</option>
+											<option value="math">Math</option>
+										</select>
+									</label>
+									<label>Description:</label>
+									<textarea
+										name="content"
+										class="textarea w-full"
+										placeholder="Description..."
+									></textarea>
+								</div>
+								<button type="submit" class="btn btn-primary">Create</button>
+							</form>
+						</div>
+					</dialog>
+					<div id="announcements-list">
+						for _, announcement := range data.Announcements {
+							<div class="border-b py-2 flex justify-between items-center">
+								<div>
+									<h3 class="font-medium">{ announcement.Title }</h3>
+									<p class="text-sm text-gray-600">{ announcement.Display }</p>
+								</div>
+								<button
+									class="btn btn-outline btn-error btn-circle"
+									hx-swap="none"
+									hx-delete={ "/v1/admin/announcement?id=" + fmt.Sprintf("%v", announcement.ID) }
+									hx-refresh="true"
+								>🗑️</button>
+							</div>
+						}
+					</div>
+				</div>
+				<!-- Projects Section -->
+				<div class="bg-white p-6 rounded-lg shadow" id="projects">
+					<h2 class="text-xl font-semibold mb-4">Final Year Projects</h2>
+					<button class="btn btn-outline btn-primary" onclick={ templ.ComponentScript{Call: "my_modal_31.showModal()"} }>
+						Create Project
+					</button>
+					<dialog id={ "my_modal_31" } class="modal text-slate-800">
+						<div class="modal-box">
+							<form hx-disable method="dialog">
+								<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+							</form>
+							<h3 class="font-bold text-lg mb-4">Create Projects:</h3>
+							<form
+								class="flex flex-col gap-2"
+								action="/v1/admin/project"
+								method="POST"
+							>
+								<div class="flex flex-col gap-2 h-full w-full" id="inputs">
+									<label>Title:</label>
+									<input
+										type="text"
+										name="title"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+									<label>Description:</label>
+									<textarea
+										name="description"
+										class="textarea w-full"
+										placeholder="Description..."
+									></textarea>
+								</div>
+								<button type="submit" class="btn btn-primary">Create</button>
+							</form>
+						</div>
+					</dialog>
+					<div id="projects-list">
+						for _, project := range data.Projects {
+							<div class="border-b py-2 flex justify-between items-center">
+								<div>
+									<h3 class="font-medium">{ project.Title }</h3>
+									<p class="text-sm text-gray-600 line-clamp-2">{ project.Description }</p>
+								</div>
+								<button
+									class="btn btn-outline btn-error btn-circle"
+									hx-swap="none"
+									hx-delete={ "/v1/admin/project?id=" + fmt.Sprintf("%v", project.ID) }
+									hx-refresh="true"
+								>🗑️</button>
+							</div>
+						}
+					</div>
+				</div>
+				<!-- Wishlists Section -->
+				<div class="bg-white p-6 rounded-lg shadow" id="wishlists">
+					<h2 class="text-xl font-semibold mb-4">Student Wishlists</h2>
+					<div id="wishlists-list">
+						for i, wishlist := range data.Wishlists {
+							<div class="border-b py-2 flex justify-between items-center">
+								<div>
+									<h3 class="font-medium">{ fmt.Sprintf("%s %s" ,wishlist.StudentName.FirstName,wishlist.StudentName.LastName) }</h3>
+									<p class="text-sm text-gray-600">Projects: { fmt.Sprintf ("%v",len(wishlist.Projects)) }</p>
+								</div>
+								<div>
+									<button class="btn btn-outline btn-info btn-circle" onclick={ templ.ComponentScript{Call: "my_modal_34" + fmt.Sprintf("%v", i) + ".showModal()"} }>📄</button>
+								</div>
+								<dialog id={ "my_modal_34" + fmt.Sprintf("%v", i) } class="modal text-slate-800">
+									<div class="modal-box">
+										<form hx-disable method="dialog">
+											<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+										</form>
+										<h3 class="font-bold text-lg mb-4">Wishlist:</h3>
+										for i,wish:=range wishlist.Projects {
+											<div class="flex justify-between items-center pb-4">
+												<p class="text-sm text-slate-800">{ fmt.Sprintf ("%v.%v",i+1 , wish.Title) }</p>
+												<button
+													class="btn btn-outline btn-error btn-circle"
+													hx-swap="none"
+													hx-delete={ "/v1/admin/wishlist?id=" + fmt.Sprintf("%v", wishlist.ID[i]) }
+													hx-refresh="true"
+												>🗑️</button>
+											</div>
+										}
+									</div>
+								</dialog>
+							</div>
+						}
+					</div>
+				</div>
+				<!-- Students acc-->
+				<div class="bg-white p-6 rounded-lg shadow" id="students">
+					<h2 class="text-xl font-semibold mb-4">Students</h2>
+					<button class="btn btn-outline btn-primary" onclick={ templ.ComponentScript{Call: "my_modal_32.showModal()"} }>
+						Add Student
+					</button>
+					<dialog id={ "my_modal_32" } class="modal text-slate-800">
+						<div class="modal-box">
+							<form hx-disable method="dialog">
+								<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+							</form>
+							<h3 class="font-bold text-lg mb-4">Add Student:</h3>
+							<form
+								class="flex flex-col gap-2"
+								action="/v1/admin/student"
+								method="POST"
+							>
+								<div class="flex flex-col gap-2 h-full w-full" id="inputs">
+									<label>First Name:</label>
+									<input
+										type="text"
+										name="first_name"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+									<label>Last Name:</label>
+									<input
+										type="text"
+										name="last_name"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+									<label>Email:</label>
+									<input
+										type="email"
+										name="email"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+									<label>Password:</label>
+									<input
+										type="password"
+										name="password"
+										class={ "input input-bordered input-sm text-center w-full " }
+									/>
+								</div>
+								<button type="submit" class="btn btn-primary">Add</button>
+							</form>
+						</div>
+					</dialog>
+					<div id="projects-list">
+						for _, student := range data.Students {
+							<div class="border-b py-2 flex justify-between items-center">
+								<div>
+									<h3 class="font-medium">{ fmt.Sprintf("%s %s" , student.FirstName,student.LastName) }</h3>
+									<p class="text-sm text-gray-600 line-clamp-2">{ student.Email }</p>
+								</div>
+								<button
+									class="btn btn-outline btn-error btn-circle"
+									hx-swap="none"
+									hx-delete={ "/v1/admin/student?id=" + fmt.Sprintf("%v", student.ID) }
+									hx-refresh="true"
+								>🗑️</button>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}

@@ -1,6 +1,9 @@
 package templates
 
-import "context"
+import (
+	"context"
+	"github.com/Saakhr/Web-proj/pkg/v1/services"
+)
 
 func NameFromContext(ctx context.Context) string {
 	if name, ok := ctx.Value("name").(string); ok && name != "" {
@@ -9,12 +12,12 @@ func NameFromContext(ctx context.Context) string {
 	return "World"
 }
 
-templ Home(name string) {
-  @layout(name){
-    <div class="text-cyan-900 bg-red-500 w-32" >Hello { name }</div>
-      <div>Hello { NameFromContext(ctx) } (from context)</div>
-      <button class="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl">Responsive</button>
-  }
+templ Home(name string, claim *services.Claims) {
+	@layout(name, claim) {
+		<div class="text-cyan-900 bg-red-500 w-32">Hello { name }</div>
+		<div>Hello { NameFromContext(ctx) } (from context)</div>
+		<button class="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl">Responsive</button>
+	}
 }
 
 templ NotFound() {

@@ -1,0 +1,69 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/Saakhr/Web-proj/pkg/models"
+	"github.com/Saakhr/Web-proj/pkg/v1/services"
+)
+
+type DashBoardDataStudent struct {
+	MyWishlists models.StudentWishlist
+	Projects    []models.Projects
+}
+
+templ StudentDashBoard(data *DashBoardDataStudent, claim *services.Claims) {
+	@layout("Student Dashboard", claim) {
+		<div class="container mx-auto px-4 py-8 text-slate-800">
+			<h1 class="text-2xl font-bold mb-6">Student Dashboard</h1>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<!-- Announcements Section -->
+				<div id="announcements" class="bg-white p-6 rounded-lg shadow">
+					<h2 class="text-xl font-semibold mb-4">Wishlist:</h2>
+					<button class="btn btn-outline btn-primary" onclick={ templ.ComponentScript{Call: "my_modal_3.showModal()"} }>
+						Add to Wishlist
+					</button>
+					<dialog id={ "my_modal_3" } class="modal text-slate-800">
+						<div class="modal-box">
+							<form hx-disable method="dialog">
+								<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+							</form>
+							<h3 class="font-bold text-lg mb-4">Add Announcement:</h3>
+							<form
+								class="flex flex-col gap-2"
+								action="/v1/student/wishlist"
+								method="POST"
+								enctype="multipart/form-data"
+							>
+								<div class="flex flex-col gap-2 h-full w-full" id="inputs">
+									for _,project := range data.Projects {
+										<div class="flex justify-between items-center">
+											<label>{ project.Title }</label>
+											<input type="checkbox" class="checkbox checkbox-xl" name="selectedProjects" value={ fmt.Sprintf("%v", project.ID) }/>
+										</div>
+									}
+									<button type="submit" class="btn btn-primary">Add</button>
+								</div>
+							</form>
+						</div>
+					</dialog>
+					<div id="announcements-list">
+						for _, announcement := range data.MyWishlists.Projects {
+							<div class="border-b py-2 flex justify-between items-center">
+								<div>
+									<h3 class="font-medium">{ announcement.Title }</h3>
+									<!--<p class="text-sm text-gray-600">{ announcement.Display }</p>-->
+								</div>
+								<button
+									class="btn btn-outline btn-error btn-circle"
+									hx-swap="none"
+									hx-delete={ "/v1/student/wishlist?id=" + fmt.Sprintf("%v", announcement.ID) }
+									hx-refresh="true"
+								>🗑️</button>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}

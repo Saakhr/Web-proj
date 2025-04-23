@@ -5,10 +5,13 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	// "github.com/joho/godotenv"
 	"log"
 	"os"
 
+	// "github.com/joho/godotenv"
+
+	"github.com/Saakhr/Web-proj/pkg/database"
+	"github.com/Saakhr/Web-proj/pkg/models"
 	v1middlewares "github.com/Saakhr/Web-proj/pkg/v1/middlewares"
 	v1routes "github.com/Saakhr/Web-proj/pkg/v1/routes"
 	"github.com/gofiber/fiber/v2"
@@ -20,18 +23,25 @@ var (
 )
 
 func main() {
-	// err := godotenv.Load()
+	var err error
+	// err = godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
+
+	err = database.InitDB()
+	if err != nil {
+		log.Fatal("Database initialization failed: ", err)
+	}
+	defer database.DB.Close()
+  createInitialAdmin()
+
 	app := fiber.New()
 
-
   app.Static("/static", "./static")
-  // app.Static("/css", "./css")
 
   // JWT initialization
-  err := getKey()
+  err = getKey()
   if err != nil {
     log.Fatal("Couldn't Load JWT RSA key" + err.Error())
   }
@@ -75,4 +85,32 @@ func getKey() error {
 		return errors.New("Error: parsed key is not an RSA private key")
 	}
 	return nil
+}
+func createInitialAdmin() {
+	// Check if admin exists
+	var count int
+	err := database.DB.QueryRow("SELECT COUNT(*) FROM admins").Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if count == 0 {
+		admin := &models.Admin{
+			Email:    "admin@admin.com",
+			Password: "123456",
+			FullName: "System Administrator",
+		}
+
+		if err := admin.HashPassword(); err != nil {
+			log.Fatal("Failed to hash admin password: ", err)
+		}
+
+		_, err := database.DB.Exec(
+			"INSERT INTO admins (email, password, full_name) VALUES (?, ?, ?)",
+			admin.Email, admin.Password, admin.FullName)
+		if err != nil {
+			log.Fatal("Failed to create initial admin: ", err)
+		}
+		log.Println("Initial admin user created")
+	}
 }
